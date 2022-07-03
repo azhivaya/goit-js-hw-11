@@ -131,9 +131,9 @@ function onBtnLoadMoreClick() {
   
 };
 
-function loadMoreBtnToggle() {
-    btnLoadMore.classList.toggle('is-hidden');
-}
+// function loadMoreBtnToggle() {
+//     btnLoadMore.classList.toggle('is-hidden');
+// }
 // console.log(newGal);
 
 // const optionsForObserver = {
