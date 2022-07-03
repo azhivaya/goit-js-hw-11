@@ -123,13 +123,13 @@ function createGallery({ hits: cards, totalHits: total }) {
   
 };
 
-function onBtnLoadMoreClick() {
-    pageNum +=1;
+// function onBtnLoadMoreClick() {
+//     pageNum +=1;
 
-  fetchImages().then(data => gallery.insertAdjacentHTML('beforeend', createGallery(data)));
-  // smoothScrolling();
+//   fetchImages().then(data => gallery.insertAdjacentHTML('beforeend', createGallery(data)));
+//   // smoothScrolling();
   
-};
+// };
 
 // function loadMoreBtnToggle() {
 //     btnLoadMore.classList.toggle('is-hidden');
