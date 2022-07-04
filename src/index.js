@@ -1,11 +1,12 @@
-import './sass/index.scss'
 import { Notify } from "notiflix";
+
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
+const lightbox = new SimpleLightbox('.gallery a');
 
 
 // import axios from "axios";
-
-import simpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
 
 
 const API_KEY = '28388649-5ab5560547093ff481a2cc586';
@@ -14,12 +15,11 @@ const BASE_URL = 'https://pixabay.com/api/';
 
 
 const input = document.querySelector('[name="searchQuery"]');
-console.log(input);
 const form = document.querySelector('#search-form');
 const btnLoadMore = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
-const simpleLightbox = new SimpleLightbox('.gallery a');
 
+// createSimplelightboxGal();
 
 let pageNum = 1;
 let objectValue ='';
@@ -45,7 +45,7 @@ function onFormSubmit(e) {
   
   
     
-    console.log(objectValue);
+  console.log(objectValue);
   form.reset();
   gallery.innerHTML = '';
 
