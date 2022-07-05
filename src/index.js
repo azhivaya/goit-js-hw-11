@@ -3,7 +3,7 @@ import { Notify } from "notiflix";
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-let lightbox = new SimpleLightbox('.photo-card a');
+let lightbox = new SimpleLightbox('.gallery a');
 
 // import axios from "axios";
 
@@ -13,7 +13,7 @@ const API_KEY = '28388649-5ab5560547093ff481a2cc586';
 const BASE_URL = 'https://pixabay.com/api/';
 
 
-const input = document.querySelector('[name="searchQuery"]');
+// const input = document.querySelector('[name="searchQuery"]');
 const form = document.querySelector('#search-form');
 const btnLoadMore = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
@@ -82,10 +82,9 @@ function imagesMarkup({webformatURL, largeImageURL, tags, likes, views, comments
   return `
 
 <div class="photo-card">
-<a class='gallery__link href='${largeImageURL}'>
-<img class='gallery__image' src='${webformatURL}' alt="${tags}" loading="lazy" />
+<a class='gallery__link' href='${largeImageURL}'>
+<img class='' src='${webformatURL}' alt="${tags}" loading="lazy" />
 </a>
-
   <div class="info">
     <p class="info-item">
       <b>Likes</b>${likes}
@@ -103,6 +102,24 @@ function imagesMarkup({webformatURL, largeImageURL, tags, likes, views, comments
 
 </div>
 `
+//   return `<div class="photo-card">
+//   <a class='gallery__link' href='${largeImageURL}'
+//   <img src="" alt="" loading="lazy" />
+//   <div class="info">
+//     <p class="info-item">
+//       <b>Likes</b>
+//     </p>
+//     <p class="info-item">
+//       <b>Views</b>
+//     </p>
+//     <p class="info-item">
+//       <b>Comments</b>
+//     </p>
+//     <p class="info-item">
+//       <b>Downloads</b>
+//     </p>
+//   </div>
+// </div>`
 };
 
 function resetValues() {
