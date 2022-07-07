@@ -9,18 +9,8 @@ import { displayGalleryOnPage } from './partials/displayGalleryOnPage';
 
 let lightbox = new SimpleLightbox('.gallery a');
 
-
-// import axios from "axios";
-
-
-// const API_KEY = '28388649-5ab5560547093ff481a2cc586';
-// // // axios.defaults.baseURL = 'https://pixabay.com/api/'
-// const BASE_URL = 'https://pixabay.com/api/';
-
-
-// const input = document.querySelector('[name="searchQuery"]');
 const form = document.querySelector('#search-form');
-const btnLoadMore = document.querySelector('.load-more');
+// const btnLoadMore = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
 
 let pageNum = 1;
@@ -36,23 +26,7 @@ let totalCards = 0;
 
 } */
 
-// при новом сабмите нужно очистить предудіщию разметку
-
 form.addEventListener('submit', onFormSubmit);
-// btnLoadMore.addEventListener('click', onBtnLoadMoreClick);
-
-// function onFormSubmit(e) {
-//     e.preventDefault();
-
-//   objectValue = e.target.elements.searchQuery.value;
-//     // console.log(objectValue);
-    
-//   resetValues();
-  
-//     fetchImages(objectValue, cardsPerPage, pageNum)
-//     .then(checkQuery)
-//     .catch(error => console.log(error));
-// };
 
 async function onFormSubmit(e) {
   try{ e.preventDefault();
@@ -68,7 +42,6 @@ async function onFormSubmit(e) {
     console.log(err);
   }
 };
-
 
 function checkQuery({ data }) {
   const uppercaseQuery = objectValue.toUpperCase();
