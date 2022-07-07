@@ -10,17 +10,7 @@ const API_KEY = '28388649-5ab5560547093ff481a2cc586';
 // let cardsPerPage = 40;
 
 export async function fetchImages(objectValue, cardsPerPage, pageNum) {
-    console.log('fetchImages first');
-    // const options = new URLSearchParams({
-
-    // key: API_KEY,
-    // q: objectValue,
-    // image_type: 'photo',
-    // orientation: 'horizontal',
-    // safesearch: true,
-    // per_page: cardsPerPage,
-    // page: pageNum,
-    // });
+    // console.log('fetchImages first');
     const options = {
         params: {
         key: API_KEY,
