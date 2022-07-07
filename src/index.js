@@ -3,14 +3,19 @@ import { Notify } from "notiflix";
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+import { createGalleryMarkup } from './partials/createGalleryMarkup';
+import { fetchImages } from './partials/fetchImages';
+import { displayGalleryOnPage } from './partials/displayGalleryOnPage';
+
 let lightbox = new SimpleLightbox('.gallery a');
+
 
 // import axios from "axios";
 
 
-const API_KEY = '28388649-5ab5560547093ff481a2cc586';
-// // axios.defaults.baseURL = 'https://pixabay.com/api/'
-const BASE_URL = 'https://pixabay.com/api/';
+// const API_KEY = '28388649-5ab5560547093ff481a2cc586';
+// // // axios.defaults.baseURL = 'https://pixabay.com/api/'
+// const BASE_URL = 'https://pixabay.com/api/';
 
 
 // const input = document.querySelector('[name="searchQuery"]');
@@ -20,7 +25,8 @@ const gallery = document.querySelector('.gallery');
 
 let pageNum = 1;
 let objectValue ='';
-let perPage = 40;
+let cardsPerPage = 40;
+let totalCards = 0;
 
 
 // simpleLightbox options
@@ -35,153 +41,141 @@ let perPage = 40;
 form.addEventListener('submit', onFormSubmit);
 // btnLoadMore.addEventListener('click', onBtnLoadMoreClick);
 
-function onFormSubmit(e) {
-    e.preventDefault();
+// function onFormSubmit(e) {
+//     e.preventDefault();
 
-  objectValue = e.target.elements.searchQuery.value;
-    console.log(objectValue);
+//   objectValue = e.target.elements.searchQuery.value;
+//     // console.log(objectValue);
     
-    resetValues();
-
-    fetchImages()
-    .then(checkQuery)
-    .catch(error => console.log(error));
-};
-
-function checkQuery({hits: cards, totalHits: totalCards}) {
-  const uppercaseQuery = objectValue.toUpperCase();
-// if(data.totalHits === 0) {
-    if(!totalCards){
-          Notify.failure(`Sorry, there are no images matching your ${uppercaseQuery} query. Please try again.`);
-          return;
-      };
-      Notify.success(`Hooray! We found ${totalCards} images on your ${uppercaseQuery} query.`);
-        // loadMoreBtnToggle();
-  gallery.insertAdjacentHTML('beforeend', createGalleryMarkup(cards));
-  lightbox.refresh();
-};
-
-
-
-// function btnLoadMoreSwitch() {
-//     if(perPage * pageNum >= total) {
-//       // loadMoreBtnToggle();
-//       setTimeout(() => {
-//   Notify.warning("We're sorry, but you've reached the end of search results.");
-//       }, 2000)
-
-//   };
+//   resetValues();
   
+//     fetchImages(objectValue, cardsPerPage, pageNum)
+//     .then(checkQuery)
+//     .catch(error => console.log(error));
 // };
 
-function createGalleryMarkup(cards) {
-return cards.map(card => imagesMarkup(card)).join('');
-}
+async function onFormSubmit(e) {
+  try{ e.preventDefault();
 
-function imagesMarkup({webformatURL, largeImageURL, tags, likes, views, comments, downloads }) {
-  return `
+  objectValue = e.target.elements.searchQuery.value;
+    // console.log(objectValue);
+    
+  resetValues();
+  
+  const fetchResult = await fetchImages(objectValue, cardsPerPage, pageNum);
+    await checkQuery(fetchResult);
+  } catch (err) {
+    console.log(err);
+  }
+   
 
-<div class="photo-card">
-<a class='gallery__link' href='${largeImageURL}'>
-<img class='' src='${webformatURL}' alt="${tags}" loading="lazy" />
-</a>
-  <div class="info">
-    <p class="info-item">
-      <b>Likes</b>${likes}
-    </p>
-    <p class="info-item">
-      <b>Views</b>${views}
-    </p>
-    <p class="info-item">
-      <b>Comments</b>${comments}
-    </p>
-    <p class="info-item">
-      <b>Downloads</b>${downloads}
-    </p>
-  </div>
+};
 
-</div>
-`
-//   return `<div class="photo-card">
-//   <a class='gallery__link' href='${largeImageURL}'
-//   <img src="" alt="" loading="lazy" />
-//   <div class="info">
-//     <p class="info-item">
-//       <b>Likes</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Views</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Comments</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Downloads</b>
-//     </p>
-//   </div>
-// </div>`
+function checkQuery({ data }) {
+  const uppercaseQuery = objectValue.toUpperCase();
+  console.log('data clg:', data);
+
+  cards = data.hits;
+  totalCards = data.totalHits;
+
+  if (objectValue === '') {
+    Notify.warning('Please, enter your query!');
+    return;
+  };
+
+  if(!totalCards) {
+    Notify.failure(`Sorry, there are no images matching your ${uppercaseQuery} query. Please try again.`);
+    return;
+  };
+
+  Notify.success(`Hooray! We found ${totalCards} images on your ${uppercaseQuery} query.`);
+  // loadMoreBtnOn();
+  checkLastPage();
+  // displayGalleryOnPage(gallery, cards);
+
+  gallery.insertAdjacentHTML('beforeend', createGalleryMarkup(cards));
+  lightbox.refresh();
+  setTimeout(observerOn, 3000);
+};
+
+function displayGalleryOnPage(gallery, cards) {
+  gallery.insertAdjacentHTML('beforeend', createGalleryMarkup(cards));
 };
 
 function resetValues() {
-    btnLoadMore.classList.add('is-hidden');
-    form.reset();
+  // loadMoreBtnOff();
+  
+  form.reset();
     gallery.innerHTML = '';
-    pageNum =1;
-}
-
-function fetchImages() {
-const options = new URLSearchParams({
-    q: objectValue,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-    per_page: perPage,
-    page: pageNum,
-});
-
-    
-    return fetch(`${BASE_URL}?key=${API_KEY}&${options}`)
-    .then(response => {
-        if(!response.ok) {
-            throw new Error(response.status)
-        }
-        return response.json();
-    });
+  pageNum = 1;
+  observerOff();
 };
 
-// function onBtnLoadMoreClick() {
+function checkLastPage() {
+
+  if(cardsPerPage * pageNum >= totalCards) {
+    // loadMoreBtnOff();
+
+    Notify.warning("We're sorry, but you've reached the end of search results.");
+    return true;
+    
+  } else {
+    return false;
+  }
+};
+
+const optionsForObserver = {
+  rootMargin: '350px',
+  threshold: 1.0,
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      console.log('yeeeehhhh');
+
+      if (checkLastPage()) {
+        return;
+      };
+
+      pageNum += 1;
+      // displayGalleryOnPage()
+      fetchImages(objectValue, cardsPerPage, pageNum).then(({ data }) => gallery.insertAdjacentHTML('beforeend', createGalleryMarkup(data.hits)));
+      // data = data.hits
+    };
+  });
+}, optionsForObserver);
+
+// observer.observe(document.querySelector('.scroll-guard'))
+
+function observerOn() {
+  observer.observe(document.querySelector('.scroll-guard'));
+}
+
+function observerOff() {
+  observer.unobserve(document.querySelector('.scroll-guard'));
+}
+
+// function onBtnLoadMoreClick(total) {
 //     pageNum +=1;
 
-//   fetchImages().then(data => gallery.insertAdjacentHTML('beforeend', createGallery(data)));
+//   fetchImages()
+//     .then(data => gallery.insertAdjacentHTML('beforeend', createGalleryMarkup(data.hits)));
+  
+//   checkLastPage(total);
+  
 //   // smoothScrolling();
   
 // };
 
-// function loadMoreBtnToggle() {
-//     btnLoadMore.classList.toggle('is-hidden');
+// function loadMoreBtnOn() {
+//     btnLoadMore.classList.remove('is-hidden');
+// }
+// function loadMoreBtnOff() {
+//     btnLoadMore.classList.add('is-hidden');
+  
 // }
 // console.log(newGal);
-
-// const optionsForObserver = {
-//   rootMargin: '200px',
-//   threshold:1.0,
-// };
-
-// const observer = new IntersectionObserver((entries) => {
-//   entries.forEach(entry => {
-//     if (entry.isIntersecting) {
-//       console.log('yeeeehhhh');
-      
-//       // if (!dataForSc.hits.length === 0) {
-//       //   fetchImages().then(data => gallery.insertAdjacentHTML('beforeend', createGallery(dataForSc.hits, dataForSc.totalHits)));
-//       // pageNum += 1;
-//       // }
-//       // return;
-//   }
-// })
-// }, optionsForObserver)
-
-// observer.observe(document.querySelector('.scroll-guard'))
 
 // function smoothScrolling() {
 //   const { height: cardHeight } = document
@@ -195,58 +189,3 @@ const options = new URLSearchParams({
 //   behavior: "smooth",
 // });
 // }
-
-
-// // В ответе будет массив изображений удовлетворивших критериям параметров запроса. Каждое изображение описывается объектом, из которого тебе интересны только следующие свойства:
-
-// // webformatURL - ссылка на маленькое изображение для списка карточек.
-// // largeImageURL - ссылка на большое изображение.
-// // tags - строка с описанием изображения. Подойдет для атрибута alt.
-// // likes - количество лайков.
-// // views - количество просмотров.
-// // comments - количество комментариев.
-// // downloads - количество загрузок.
-
-// function fetchImages(images) {
-// return fetch(url, options).then(r=>r.json()).then(console.log);
-// }
-
-// fetchImages('image').then(image => {console.log(image)})
-// input.addEventListener('input', () => {
-//     search = input.value;
-//     console.log(search);
-// })
-
-// // btn.addEventListener('click', onBtnClick);
-
-// form.addEventListener('submit', onFormSubmit);
-
-// function imagesMarkup(images) {
-// return images.map(({webformatURL,largeImageURL, tags, likes, views, comments, downloads}) => `<div class="photo-card">
-//   <img src='${webformatURL}' alt="" loading="lazy" />
-//   <div class="info ${tags}">
-//     <p class="info-item">
-//       <b>Likes ${likes}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Views ${views}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Comments ${comments}</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Downloads ${downloads}</b>
-//     </p>
-//   </div>
-// </div>`).join('');
-
-// }
-
-// function addImagesToGallery(images) {
-// gallery.insertAdjacentHTML('beforeend', imagesMarkup());
-// };
-
-// console.log(gallery);
-
-
-
