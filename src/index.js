@@ -67,15 +67,14 @@ async function onFormSubmit(e) {
   } catch (err) {
     console.log(err);
   }
-   
-
 };
+
 
 function checkQuery({ data }) {
   const uppercaseQuery = objectValue.toUpperCase();
   console.log('data clg:', data);
 
-  cards = data.hits;
+  const cards = data.hits;
   totalCards = data.totalHits;
 
   if (objectValue === '') {
