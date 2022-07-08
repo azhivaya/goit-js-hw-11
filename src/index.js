@@ -31,7 +31,7 @@ form.addEventListener('submit', onFormSubmit);
 async function onFormSubmit(e) {
   try{ e.preventDefault();
 
-  objectValue = e.target.elements.searchQuery.value;
+  objectValue = e.target.elements.searchQuery.value.trim();
     // console.log(objectValue);
     
   resetValues();
